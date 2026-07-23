@@ -142,6 +142,17 @@
     .ubadge.inactivo{background:#f5f5f5;color:var(--gris-dark);}
     .btn-toggle{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--borde);background:var(--gris);color:var(--texto-sec);cursor:pointer;font-family:inherit;}
     .btn-toggle:hover{border-color:var(--azul);color:var(--azul);}
+    .btn-reset{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--rosa-border);background:var(--rosa-light);color:#7A2A42;cursor:pointer;font-family:inherit;}
+    .btn-reset:hover{background:var(--rosa-border);}
+    .clave-modal{background:var(--blanco);border-radius:12px;padding:1.5rem;max-width:380px;width:100%;position:relative;}
+    .clave-modal h3{font-size:15px;font-weight:600;margin-bottom:1rem;}
+    .clave-campos{display:flex;flex-direction:column;gap:10px;}
+    .clave-campos label{font-size:12px;color:var(--texto-sec);font-weight:500;display:block;margin-bottom:4px;}
+    .clave-campos input{width:100%;padding:8px 10px;border:1px solid var(--borde);border-radius:var(--radio);font-size:13px;font-family:inherit;background:var(--gris);}
+    .clave-actions{display:flex;gap:8px;margin-top:1rem;}
+    .btn-cancelar{background:var(--gris);color:var(--texto-sec);border:1px solid var(--borde);border-radius:var(--radio);padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;}
+    .mi-clave-box{background:var(--gris);border-radius:10px;padding:1rem;margin-bottom:1rem;}
+    .mi-clave-box h4{font-size:13px;font-weight:600;color:var(--azul);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 
     /* AUDITORÍA */
     .alog{background:var(--blanco);border:1px solid var(--borde);border-radius:10px;padding:.75rem 1.25rem;margin-bottom:6px;font-size:13px;}
@@ -153,6 +164,31 @@
     /* NUEVO USUARIO FORM */
     .nuform{background:var(--gris);border-radius:10px;padding:1rem;margin-bottom:1rem;}
     .nuform .fgrid{grid-template-columns:1fr 1fr;}
+
+    
+    /* VER CONTRASEÑA */
+    .pwd-wrap{position:relative;display:flex;align-items:center;}
+    .pwd-wrap input{flex:1;padding-right:38px;}
+    .eye-btn{position:absolute;right:10px;background:none;border:none;cursor:pointer;color:var(--texto-muted);font-size:16px;padding:0;display:flex;align-items:center;}
+    .eye-btn:hover{color:var(--azul);}
+
+    /* BIENVENIDA */
+    .bienvenida-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;}
+    .bienvenida-box{background:var(--blanco);border-radius:14px;padding:2rem;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;}
+    .bienvenida-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--borde);}
+    .bienvenida-icon{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;}
+    .bienvenida-icon img{width:100%;height:100%;object-fit:cover;}
+    .bienvenida-titulo{font-size:16px;font-weight:600;color:var(--azul);}
+    .bienvenida-sub{font-size:12px;color:var(--texto-muted);margin-top:2px;}
+    .bienvenida-rol{display:inline-flex;align-items:center;gap:5px;background:var(--celeste-light);color:#1E4D66;border:1px solid var(--celeste-border);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:500;margin-bottom:1rem;}
+    .bienvenida-item{display:flex;align-items:flex-start;gap:10px;padding:.75rem 0;border-bottom:1px solid var(--borde);}
+    .bienvenida-item:last-of-type{border-bottom:none;}
+    .bienvenida-item i{font-size:20px;color:var(--azul);flex-shrink:0;margin-top:1px;}
+    .bienvenida-item-txt strong{font-size:13px;display:block;margin-bottom:2px;}
+    .bienvenida-item-txt span{font-size:12px;color:var(--texto-sec);line-height:1.5;}
+    .btn-bienvenida{width:100%;background:var(--azul);color:#fff;border:none;border-radius:var(--radio);padding:11px;font-size:14px;cursor:pointer;font-weight:500;font-family:inherit;margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .btn-bienvenida:hover{background:var(--azul-dark);}
+    .bienvenida-nota{font-size:11px;color:var(--texto-muted);text-align:center;margin-top:8px;}
 
     .footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--texto-muted);margin-top:1rem;}
 
@@ -229,7 +265,10 @@
         <p>Ingresa tus credenciales para administrar el repositorio.</p>
         <div class="login-fields">
           <input type="text" id="lg-user" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()" />
-          <input type="password" id="lg-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()" />
+          <div class="pwd-wrap">
+            <input type="password" id="lg-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()" />
+            <button class="eye-btn" type="button" onclick="toggleOjo('lg-pass',this)" tabindex="-1"><i class="ti ti-eye"></i></button>
+          </div>
         </div>
         <button class="btn-login" onclick="doLogin()"><i class="ti ti-login"></i> Ingresar</button>
         <p class="login-err" id="lg-err"><i class="ti ti-alert-circle"></i> Credenciales incorrectas.</p>
@@ -297,11 +336,25 @@
       <!-- USUARIOS -->
       <div id="apanel-usuarios" style="display:none;">
         <div class="admin-card">
+
+          <!-- Cambiar clave propia -->
+          <div class="mi-clave-box">
+            <h4><i class="ti ti-key"></i> Cambiar mi contraseña</h4>
+            <div class="fgrid">
+              <div class="fg"><label>Nueva contraseña</label><div class="pwd-wrap"><input type="password" id="mc-nueva" placeholder="mínimo 6 caracteres" /><button class="eye-btn" type="button" onclick="toggleOjo('mc-nueva',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div></div>
+              <div class="fg"><label>Confirmar contraseña</label><div class="pwd-wrap"><input type="password" id="mc-confirm" placeholder="repite la clave" /><button class="eye-btn" type="button" onclick="toggleOjo('mc-confirm',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div></div>
+              <div class="fg" style="align-self:flex-end;">
+                <button class="btn-guardar" onclick="cambiarMiClave()" style="justify-content:center;width:100%;"><i class="ti ti-lock-check"></i> Guardar clave</button>
+              </div>
+            </div>
+            <p class="fmsg" id="mc-msg" style="margin-top:8px;"></p>
+          </div>
+
           <div class="fsec"><i class="ti ti-user-plus"></i> Crear nuevo usuario</div>
           <div class="nuform">
             <div class="fgrid">
               <div class="fg"><label>Nombre de usuario</label><input type="text" id="nu-user" placeholder="sin espacios" /></div>
-              <div class="fg"><label>Contraseña</label><input type="password" id="nu-pass" placeholder="mínimo 6 caracteres" /></div>
+              <div class="fg"><label>Contraseña</label><div class="pwd-wrap"><input type="password" id="nu-pass" placeholder="mínimo 6 caracteres" /><button class="eye-btn" type="button" onclick="toggleOjo('nu-pass',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div></div>
               <div class="fg" id="nu-rol-campo">
                 <label>Rol</label>
                 <select id="nu-rol"><option value="editor">Editor</option><option value="superadmin">Super Admin</option></select>
@@ -329,6 +382,23 @@
 
 </main>
 
+
+<!-- BIENVENIDA -->
+<div class="bienvenida-overlay" id="bienvenida-overlay" style="display:none;">
+  <div class="bienvenida-box" id="bienvenida-box">
+    <div class="bienvenida-header">
+      <div class="bienvenida-icon"><img src="escudo.png" alt="Escudo" /></div>
+      <div>
+        <div class="bienvenida-titulo">Bienvenido/a al repositorio CINF Fátima</div>
+        <div class="bienvenida-sub">Centro de Investigaciones · I.E.E.N.S. Nuestra Señora de Fátima</div>
+      </div>
+    </div>
+    <div id="bienvenida-contenido"></div>
+    <button class="btn-bienvenida" onclick="cerrarBienvenida()"><i class="ti ti-check"></i> Entendido, comenzar</button>
+    <p class="bienvenida-nota">Esta pantalla solo aparece la primera vez que ingresas.</p>
+  </div>
+</div>
+
 <footer class="footer">Centro de Investigaciones de la Normal de Fátima · Sabanagrande, Atlántico · Colombia</footer>
 
 <!-- MODAL -->
@@ -347,6 +417,7 @@ let LISTA_ACTUAL = [];
 
 // ── CARGA INICIAL ──
 async function init() {
+  mostrarBienvenida('publico');
   try {
     const r = await fetch(`${BACKEND}?accion=consultar`);
     const d = await r.json();
@@ -477,6 +548,7 @@ async function doLogin() {
       document.getElementById('huser').style.display='flex';
       document.getElementById('huser-name').textContent = d.usuario+' ('+d.rol+')';
       document.getElementById('hbadge').style.display='none';
+      mostrarBienvenida(d.rol);
       // ocultar pestaña usuarios/auditoría si es editor
       if(d.rol==='editor') {
         document.getElementById('atab-usuarios').style.display='none';
@@ -598,8 +670,9 @@ async function cargarUsuarios() {
           <div class="uavatar">${ini}</div>
           <div><div class="unombre">${u.usuario}</div><div class="urol">${u.rol} · creado por ${u.creadoPor}</div></div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
           <span class="ubadge ${activo?'activo':'inactivo'}">${activo?'Activo':'Inactivo'}</span>
+          <button class="btn-reset" onclick="abrirResetClave('${u.usuario}')"><i class="ti ti-key"></i> Resetear clave</button>
           <button class="btn-toggle" onclick="toggleUsuario('${u.usuario}')">${activo?'Desactivar':'Activar'}</button>
         </div>
       </div>`;
@@ -629,6 +702,63 @@ async function crearUsuario() {
     } else { msg.textContent='Error: '+(d.error||'intenta de nuevo'); msg.className='fmsg err'; }
   } catch(e) { msg.textContent='Error de conexión.'; msg.className='fmsg err'; }
   setTimeout(()=>{msg.textContent='';msg.className='fmsg';},5000);
+}
+
+async function cambiarMiClave() {
+  if(!SESSION) return;
+  const nueva   = document.getElementById('mc-nueva').value.trim();
+  const confirm = document.getElementById('mc-confirm').value.trim();
+  const msg = document.getElementById('mc-msg');
+  if(!nueva||nueva.length<6){ msg.textContent='Mínimo 6 caracteres.'; msg.className='fmsg err'; return; }
+  if(nueva!==confirm){ msg.textContent='Las contraseñas no coinciden.'; msg.className='fmsg err'; return; }
+  try {
+    const r = await fetch(BACKEND,{method:'POST',body:JSON.stringify({
+      accion:'cambiarClave', usuario:SESSION.usuario, clave:SESSION.clave, nuevaClave:nueva
+    })});
+    const d = await r.json();
+    if(d.ok){
+      SESSION.clave = nueva;
+      msg.textContent='Contraseña actualizada correctamente.'; msg.className='fmsg ok';
+      document.getElementById('mc-nueva').value='';
+      document.getElementById('mc-confirm').value='';
+    } else { msg.textContent='Error: '+(d.error||'intenta de nuevo'); msg.className='fmsg err'; }
+  } catch(e){ msg.textContent='Error de conexión.'; msg.className='fmsg err'; }
+  setTimeout(()=>{msg.textContent='';msg.className='fmsg';},5000);
+}
+
+function abrirResetClave(objetivo) {
+  document.getElementById('modal-cont').innerHTML = `
+    <div class="clave-modal">
+      <h3><i class="ti ti-key" style="color:var(--rosa);"></i> Resetear contraseña de <em>${objetivo}</em></h3>
+      <div class="clave-campos">
+        <div><label>Nueva contraseña</label><div class="pwd-wrap"><input type="password" id="rc-nueva" placeholder="mínimo 6 caracteres" /><button class="eye-btn" type="button" onclick="toggleOjo('rc-nueva',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div></div>
+        <div><label>Confirmar</label><div class="pwd-wrap"><input type="password" id="rc-confirm" placeholder="repite la clave" /><button class="eye-btn" type="button" onclick="toggleOjo('rc-confirm',this)" tabindex="-1"><i class="ti ti-eye"></i></button></div></div>
+      </div>
+      <p class="fmsg" id="rc-msg" style="margin-top:8px;"></p>
+      <div class="clave-actions">
+        <button class="btn-guardar" onclick="confirmarResetClave('${objetivo}')"><i class="ti ti-lock-check"></i> Confirmar</button>
+        <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+
+async function confirmarResetClave(objetivo) {
+  const nueva   = document.getElementById('rc-nueva').value.trim();
+  const confirm = document.getElementById('rc-confirm').value.trim();
+  const msg = document.getElementById('rc-msg');
+  if(!nueva||nueva.length<6){ msg.textContent='Mínimo 6 caracteres.'; msg.className='fmsg err'; return; }
+  if(nueva!==confirm){ msg.textContent='Las contraseñas no coinciden.'; msg.className='fmsg err'; return; }
+  try {
+    const r = await fetch(BACKEND,{method:'POST',body:JSON.stringify({
+      accion:'resetearClave', usuario:SESSION.usuario, clave:SESSION.clave, objetivo, nuevaClave:nueva
+    })});
+    const d = await r.json();
+    if(d.ok){
+      msg.textContent='Contraseña reseteada.'; msg.className='fmsg ok';
+      setTimeout(()=>{ cerrarModal(); cargarUsuarios(); },1500);
+    } else { msg.textContent='Error: '+(d.error||'intenta de nuevo'); msg.className='fmsg err'; }
+  } catch(e){ msg.textContent='Error de conexión.'; msg.className='fmsg err'; }
 }
 
 async function toggleUsuario(objetivo) {
@@ -664,6 +794,63 @@ async function cargarAuditoria() {
         </div>
       </div>`).join('');
   } catch(e) { document.getElementById('lista-auditoria').innerHTML='<p style="color:var(--err);font-size:13px;">Error de conexión.</p>'; }
+}
+
+
+// ── VER CONTRASEÑA ──
+function toggleOjo(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const esPassword = input.type === 'password';
+  input.type = esPassword ? 'text' : 'password';
+  btn.querySelector('i').className = esPassword ? 'ti ti-eye-off' : 'ti ti-eye';
+}
+
+// ── BIENVENIDA ──
+const AYUDA = {
+  publico: [
+    { icon:'ti-search', titulo:'Buscar proyectos', desc:'Usa la barra de búsqueda para encontrar proyectos por título, autor o palabra clave.' },
+    { icon:'ti-filter', titulo:'Filtrar resultados', desc:'Filtra por tipo de proyecto, año, categoría o disponibilidad de PDF.' },
+    { icon:'ti-info-circle', titulo:'Ver detalles', desc:'Haz clic en "Ver detalles" para consultar el resumen completo, autores y objetivo de cada proyecto.' },
+    { icon:'ti-file-type-pdf', titulo:'Consultar PDF', desc:'Si el proyecto tiene versión digital, el botón "Ver PDF" te lleva al documento completo.' },
+  ],
+  editor: [
+    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Puedes buscar y explorar todos los proyectos del repositorio.' },
+    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Desde la pestaña "Administrar" puedes cargar nuevos proyectos llenando el formulario.' },
+    { icon:'ti-map-pin', titulo:'Ubicación física', desc:'Registra siempre el estante y sección donde está el trabajo físico.' },
+    { icon:'ti-link', titulo:'Enlace PDF', desc:'Si el proyecto tiene versión digital, pega el enlace de Google Drive en el campo correspondiente.' },
+  ],
+  superadmin: [
+    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Puedes buscar y explorar todos los proyectos del repositorio.' },
+    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Carga nuevos proyectos desde la pestaña "Administrar".' },
+    { icon:'ti-users', titulo:'Gestionar editores', desc:'Crea, activa o desactiva usuarios editores. Solo puedes ver y gestionar los que tú has creado.' },
+    { icon:'ti-key', titulo:'Resetear contraseñas', desc:'Puedes cambiar la contraseña de tus editores y también cambiar la tuya propia.' },
+    { icon:'ti-clipboard-list', titulo:'Auditoría', desc:'Consulta el registro de actividad de tus editores y de tu propia cuenta.' },
+  ],
+  maestro: [
+    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Acceso completo a todos los proyectos del repositorio.' },
+    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Carga nuevos proyectos desde la pestaña "Administrar".' },
+    { icon:'ti-users', titulo:'Gestionar todos los usuarios', desc:'Crea superadmins y editores, activa o desactiva cualquier cuenta.' },
+    { icon:'ti-key', titulo:'Resetear contraseñas', desc:'Puedes resetear la contraseña de cualquier usuario del sistema.' },
+    { icon:'ti-clipboard-list', titulo:'Auditoría completa', desc:'Ves el registro de actividad de todos los usuarios sin excepción.' },
+    { icon:'ti-shield', titulo:'Control total', desc:'Eres el único que puede crear superadministradores y ver toda la actividad del sistema.' },
+  ]
+};
+
+function mostrarBienvenida(rol) {
+  const claveStorage = 'cinf_bienvenida_' + rol;
+  if(localStorage.getItem(claveStorage)) return;
+  const items = AYUDA[rol] || AYUDA.publico;
+  document.getElementById('bienvenida-contenido').innerHTML =
+    `<div class="bienvenida-rol"><i class="ti ti-${rol==='maestro'?'crown':rol==='superadmin'?'star':rol==='editor'?'pencil':'users'}"></i> ${rol==='publico'?'Visitante':rol.charAt(0).toUpperCase()+rol.slice(1)}</div>` +
+    items.map(it => `<div class="bienvenida-item"><i class="ti ${it.icon}"></i><div class="bienvenida-item-txt"><strong>${it.titulo}</strong><span>${it.desc}</span></div></div>`).join('');
+  document.getElementById('bienvenida-overlay').style.display='flex';
+  window._bienvenidaRol = rol;
+}
+
+function cerrarBienvenida() {
+  localStorage.setItem('cinf_bienvenida_' + (window._bienvenidaRol||'publico'), '1');
+  document.getElementById('bienvenida-overlay').style.display='none';
 }
 
 init();
