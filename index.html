@@ -190,6 +190,44 @@
     .btn-bienvenida:hover{background:var(--azul-dark);}
     .bienvenida-nota{font-size:11px;color:var(--texto-muted);text-align:center;margin-top:8px;}
 
+    
+    /* BOTÓN AYUDA */
+    .btn-ayuda{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0;transition:background .15s;}
+    .btn-ayuda:hover{background:rgba(255,255,255,0.25);}
+
+    /* CONFIRMACIÓN */
+    .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem;}
+    .confirm-overlay.open{display:flex;}
+    .confirm-box{background:var(--blanco);border-radius:12px;padding:1.75rem;max-width:360px;width:100%;text-align:center;}
+    .confirm-box i{font-size:40px;display:block;margin-bottom:12px;}
+    .confirm-box h3{font-size:15px;font-weight:600;margin-bottom:8px;}
+    .confirm-box p{font-size:13px;color:var(--texto-sec);margin-bottom:1.25rem;line-height:1.5;}
+    .confirm-btns{display:flex;gap:8px;justify-content:center;}
+    .btn-confirm-si{background:var(--azul);color:#fff;border:none;border-radius:var(--radio);padding:9px 20px;font-size:14px;cursor:pointer;font-weight:500;font-family:inherit;}
+    .btn-confirm-si:hover{background:var(--azul-dark);}
+    .btn-confirm-si.danger{background:#9B3A57;}
+    .btn-confirm-si.danger:hover{background:#7A2A42;}
+    .btn-confirm-no{background:var(--gris);color:var(--texto-sec);border:1px solid var(--borde);border-radius:var(--radio);padding:9px 20px;font-size:14px;cursor:pointer;font-family:inherit;}
+
+    /* LIMPIAR FILTROS */
+    .btn-limpiar{background:none;border:1px solid var(--borde);color:var(--texto-sec);border-radius:var(--radio);padding:8px 12px;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+    .btn-limpiar:hover{border-color:var(--azul);color:var(--azul);}
+
+    /* CONTADOR CARACTERES */
+    .char-count{font-size:11px;color:var(--texto-muted);text-align:right;margin-top:2px;}
+
+    /* TOOLTIP */
+    [data-tip]{position:relative;}
+    [data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;font-size:11px;padding:4px 8px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:50;}
+
+    /* CAMPO OBLIGATORIO */
+    .fg label .req{color:var(--rosa);margin-left:2px;}
+
+    /* INACTIVIDAD */
+    .inactividad-bar{position:fixed;bottom:0;left:0;right:0;background:var(--azul-dark);color:#fff;font-size:13px;padding:10px 1.5rem;display:none;align-items:center;justify-content:space-between;gap:10px;z-index:400;}
+    .inactividad-bar.visible{display:flex;}
+    .btn-seguir{background:var(--celeste);color:var(--azul-dark);border:none;border-radius:var(--radio);padding:6px 14px;font-size:13px;cursor:pointer;font-weight:500;font-family:inherit;}
+
     .footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--texto-muted);margin-top:1rem;}
 
     @media(max-width:600px){
@@ -213,8 +251,9 @@
     <div class="huser" id="huser" style="display:none;">
       <i class="ti ti-user-circle"></i>
       <span id="huser-name"></span>
-      <button class="btn-logout" onclick="cerrarSesion()">Salir</button>
+      <button class="btn-logout" onclick="cerrarSesionConConfirm()"><i class="ti ti-logout"></i> Salir</button>
     </div>
+    <button class="btn-ayuda" onclick="mostrarAyudaManual()" title="Ayuda"><i class="ti ti-help"></i></button>
     <div class="hbadge" id="hbadge">Repositorio académico</div>
   </div>
 </header>
@@ -250,8 +289,8 @@
         <option value="fisico">Solo físico</option>
       </select>
     </div>
-    <div class="rcount" id="rcount"></div>
-    <div id="resultados"><div class="loading"><i class="ti ti-loader-2"></i> Cargando proyectos...</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><div class="rcount" id="rcount"></div><button class="btn-limpiar" onclick="limpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button></div>
+    <div id="resultados"><div class="empty"><i class="ti ti-search"></i>Ingresa un término de búsqueda<br>o selecciona un filtro para comenzar.</div></div>
   </div>
 
   <!-- ADMIN -->
@@ -294,15 +333,15 @@
         <div class="fsec"><i class="ti ti-info-circle"></i> Información general</div>
         <div class="fgrid">
           <div class="fg">
-            <label>Tipo de proyecto *</label>
+            <label>Tipo de proyecto <span class="req">*</span></label>
             <select id="f-tipo-proy" onchange="actualizarCampos()">
               <option value="estudiante">Trabajo de grado (estudiantes)</option>
               <option value="docente">Proyecto docente</option>
             </select>
           </div>
-          <div class="fg"><label>Año *</label><input type="number" id="f-anio-f" placeholder="2024" min="2010" max="2035" /></div>
-          <div class="fg full"><label>Título *</label><input type="text" id="f-titulo" placeholder="Título completo del proyecto" /></div>
-          <div class="fg full"><label>Autores * (separados por punto y coma)</label><input type="text" id="f-autores" placeholder="Apellido, Nombre; Apellido, Nombre..." /></div>
+          <div class="fg"><label>Año <span class="req">*</span></label><input type="number" id="f-anio-f" placeholder="2024" min="2010" max="2035" /></div>
+          <div class="fg full"><label>Título <span class="req">*</span></label><input type="text" id="f-titulo" placeholder="Título completo del proyecto" /></div>
+          <div class="fg full"><label>Autores <span class="req">*</span> <span style="font-weight:400;">(separados por punto y coma)</span></label><input type="text" id="f-autores" placeholder="Apellido, Nombre; Apellido, Nombre..." /></div>
           <div class="fg" id="c-semillero"><label>Semillero / Núcleo</label><input type="text" id="f-semillero" placeholder="Opcional" /></div>
           <div class="fg" id="c-linea" style="display:none;"><label>Línea de investigación</label><input type="text" id="f-linea" placeholder="Opcional" /></div>
           <div class="fg" id="c-tipoinv" style="display:none;">
@@ -313,7 +352,7 @@
         </div>
         <div class="fsec"><i class="ti ti-file-text"></i> Contenido académico</div>
         <div class="fgrid">
-          <div class="fg full"><label>Resumen / Abstract</label><textarea id="f-resumen" placeholder="Resumen del proyecto..."></textarea></div>
+          <div class="fg full"><label>Resumen / Abstract</label><textarea id="f-resumen" placeholder="Resumen del proyecto..." oninput="contarChars('f-resumen','cnt-resumen',600)" maxlength="600"></textarea><div class="char-count" id="cnt-resumen">0 / 600 caracteres</div></div>
           <div class="fg full" id="c-pregunta"><label>Pregunta problema</label><textarea id="f-pregunta" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
           <div class="fg full"><label>Objetivo general</label><textarea id="f-objetivo" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
           <div class="fg full" id="c-aportes" style="display:none;"><label>Aportes / Productos</label><textarea id="f-aportes" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
@@ -321,7 +360,7 @@
         <div class="fsec"><i class="ti ti-map-pin"></i> Ubicación y acceso</div>
         <div class="fgrid">
           <div class="fg">
-            <label>Tipo de acceso *</label>
+            <label>Tipo de acceso <span class="req">*</span></label>
             <select id="f-acceso-f"><option value="Físico">Solo físico</option><option value="Ambos">Físico y digital</option><option value="Digital">Solo digital</option></select>
           </div>
           <div class="fg"><label>Ubicación física</label><input type="text" id="f-ubic" placeholder="Ej: Estante 2, Sección A" /></div>
@@ -383,6 +422,26 @@
 </main>
 
 
+
+<!-- CONFIRMACIÓN GENÉRICA -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <i id="confirm-icon" class="ti ti-help-circle" style="color:var(--azul);"></i>
+    <h3 id="confirm-titulo"></h3>
+    <p id="confirm-msg"></p>
+    <div class="confirm-btns">
+      <button class="btn-confirm-si" id="confirm-si">Confirmar</button>
+      <button class="btn-confirm-no" onclick="cerrarConfirm()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVISO INACTIVIDAD -->
+<div class="inactividad-bar" id="inactividad-bar">
+  <span><i class="ti ti-clock" style="margin-right:6px;"></i> Tu sesión lleva 15 minutos sin actividad. ¿Sigues ahí?</span>
+  <button class="btn-seguir" onclick="resetInactividad()">Sigo aquí</button>
+</div>
+
 <!-- BIENVENIDA -->
 <div class="bienvenida-overlay" id="bienvenida-overlay" style="display:none;">
   <div class="bienvenida-box" id="bienvenida-box">
@@ -423,8 +482,8 @@ async function init() {
     const d = await r.json();
     PROYECTOS = d.resultados || [];
     poblarFiltros();
-    renderResultados(PROYECTOS);
     cargarCategorias();
+    document.getElementById('rcount').textContent = PROYECTOS.length + ' proyectos disponibles en el repositorio';
   } catch(e) {
     document.getElementById('resultados').innerHTML =
       `<div class="empty"><i class="ti ti-wifi-off"></i>No se pudo conectar con el repositorio.</div>`;
@@ -549,6 +608,7 @@ async function doLogin() {
       document.getElementById('huser-name').textContent = d.usuario+' ('+d.rol+')';
       document.getElementById('hbadge').style.display='none';
       mostrarBienvenida(d.rol);
+      iniciarTimerInactividad();
       // ocultar pestaña usuarios/auditoría si es editor
       if(d.rol==='editor') {
         document.getElementById('atab-usuarios').style.display='none';
@@ -608,8 +668,12 @@ async function guardarProyecto() {
   const anio    = document.getElementById('f-anio-f').value.trim();
   if(!titulo||!autores||!anio) { mostrarMsg('Completa los campos obligatorios.','err'); return; }
 
-  const btn = document.getElementById('btn-guardar');
-  btn.disabled=true; btn.innerHTML='<i class="ti ti-loader-2"></i> Guardando...';
+  return mostrarConfirm(
+    '¿Guardar proyecto?',
+    'Verifica que el título, autores y año sean correctos antes de continuar.',
+    async () => {
+      const btn = document.getElementById('btn-guardar');
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader-2"></i> Guardando...';
 
   const datos = {
     accion:'guardar', usuario:SESSION.usuario, clave:SESSION.clave,
@@ -638,7 +702,9 @@ async function guardarProyecto() {
     } else { mostrarMsg('Error: '+(d.error||'intenta de nuevo'),'err'); }
   } catch(e) { mostrarMsg('Error de conexión.','err'); }
 
-  btn.disabled=false; btn.innerHTML='<i class="ti ti-device-floppy"></i> Guardar proyecto';
+      btn.disabled=false; btn.innerHTML='<i class="ti ti-device-floppy"></i> Guardar proyecto';
+    }
+  );
 }
 
 function mostrarMsg(m,t) {
@@ -796,6 +862,86 @@ async function cargarAuditoria() {
   } catch(e) { document.getElementById('lista-auditoria').innerHTML='<p style="color:var(--err);font-size:13px;">Error de conexión.</p>'; }
 }
 
+
+
+// ── AYUDA MANUAL ──
+function mostrarAyudaManual() {
+  const rol = SESSION ? SESSION.rol : 'publico';
+  window._bienvenidaRol = rol;
+  const items = AYUDA[rol] || AYUDA.publico;
+  const etiquetas = {publico:'Visitante',editor:'Editor',superadmin:'Super Admin',maestro:'Maestro'};
+  const iconos = {publico:'users',editor:'pencil',superadmin:'star',maestro:'crown'};
+  document.getElementById('bienvenida-contenido').innerHTML =
+    `<div class="bienvenida-rol"><i class="ti ti-${iconos[rol]}"></i> ${etiquetas[rol]||rol}</div>` +
+    items.map(it => `<div class="bienvenida-item"><i class="ti ${it.icon}"></i><div class="bienvenida-item-txt"><strong>${it.titulo}</strong><span>${it.desc}</span></div></div>`).join('');
+  document.querySelector('.bienvenida-nota').style.display='none';
+  document.getElementById('bienvenida-overlay').style.display='flex';
+}
+
+function cerrarBienvenida() {
+  const rol = window._bienvenidaRol||'publico';
+  localStorage.setItem('cinf_bienvenida_'+rol,'1');
+  document.getElementById('bienvenida-overlay').style.display='none';
+  document.querySelector('.bienvenida-nota').style.display='block';
+}
+
+// ── CONFIRMACIÓN GENÉRICA ──
+let _confirmCallback = null;
+function mostrarConfirm(titulo, msg, callback, esPeligroso=false) {
+  document.getElementById('confirm-titulo').textContent = titulo;
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-icon').className = esPeligroso
+    ? 'ti ti-alert-triangle' : 'ti ti-help-circle';
+  document.getElementById('confirm-icon').style.color = esPeligroso ? '#9B3A57' : 'var(--azul)';
+  const btnSi = document.getElementById('confirm-si');
+  btnSi.className = esPeligroso ? 'btn-confirm-si danger' : 'btn-confirm-si';
+  btnSi.textContent = esPeligroso ? 'Sí, salir' : 'Confirmar';
+  _confirmCallback = callback;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function cerrarConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); _confirmCallback=null; }
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('confirm-si').addEventListener('click',()=>{ if(_confirmCallback) _confirmCallback(); cerrarConfirm(); });
+});
+
+// ── CONFIRMACIÓN SALIR ──
+function cerrarSesionConConfirm() {
+  mostrarConfirm('¿Cerrar sesión?','Asegúrate de haber guardado cualquier información antes de salir.',()=>cerrarSesion(), true);
+}
+
+// ── LIMPIAR FILTROS ──
+function limpiarFiltros() {
+  document.getElementById('buscador').value='';
+  document.getElementById('f-tipo').value='';
+  document.getElementById('f-anio').value='';
+  document.getElementById('f-cat').value='';
+  document.getElementById('f-acceso').value='';
+  renderResultados(PROYECTOS);
+}
+
+// ── CONTADOR CARACTERES ──
+function contarChars(inputId, countId, max) {
+  const el = document.getElementById(inputId);
+  const cnt = document.getElementById(countId);
+  if(!el||!cnt) return;
+  const n = el.value.length;
+  cnt.textContent = n+' / '+max+' caracteres';
+  cnt.style.color = n > max*0.9 ? '#9B3A57' : 'var(--texto-muted)';
+}
+
+// ── INACTIVIDAD ──
+let _inactTimer, _inactWarn;
+function resetInactividad() {
+  document.getElementById('inactividad-bar').classList.remove('visible');
+  clearTimeout(_inactTimer); clearTimeout(_inactWarn);
+  if(SESSION) iniciarTimerInactividad();
+}
+function iniciarTimerInactividad() {
+  clearTimeout(_inactTimer); clearTimeout(_inactWarn);
+  _inactWarn = setTimeout(()=>{ document.getElementById('inactividad-bar').classList.add('visible'); }, 15*60*1000);
+  _inactTimer = setTimeout(()=>{ if(SESSION){ cerrarSesion(); alert('Sesión cerrada por inactividad.'); } }, 20*60*1000);
+}
+['click','keydown','mousemove'].forEach(ev => document.addEventListener(ev, ()=>{ if(SESSION) resetInactividad(); }, {passive:true}));
 
 // ── VER CONTRASEÑA ──
 function toggleOjo(inputId, btn) {
