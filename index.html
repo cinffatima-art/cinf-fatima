@@ -191,6 +191,38 @@
     .bienvenida-nota{font-size:11px;color:var(--texto-muted);text-align:center;margin-top:8px;}
 
     
+
+    /* PESTAÑA DRIVE */
+    .drive-section{margin-bottom:1.5rem;}
+    .drive-tree{background:var(--gris);border-radius:10px;padding:1rem 1.25rem;font-size:13px;line-height:2;font-family:monospace;color:var(--texto);}
+    .drive-tree span{color:var(--azul);font-weight:500;}
+    .drive-editor-card{background:var(--blanco);border:1px solid var(--borde);border-radius:10px;padding:.9rem 1.25rem;margin-bottom:8px;}
+    .drive-editor-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+    .drive-editor-info{display:flex;align-items:center;gap:10px;}
+    .drive-editor-correo{font-size:12px;color:var(--texto-muted);margin-top:2px;}
+    .drive-editor-acciones{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn-drive-dar{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--celeste-border);background:var(--celeste-light);color:#1E4D66;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;}
+    .btn-drive-dar:hover{background:var(--celeste-border);}
+    .btn-drive-revocar{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--rosa-border);background:var(--rosa-light);color:#7A2A42;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;}
+    .btn-drive-revocar:hover{background:var(--rosa-border);}
+    .instrucciones-box{background:var(--gris);border-radius:10px;padding:1rem 1.25rem;margin-top:10px;display:none;font-size:13px;line-height:1.7;color:var(--texto);}
+    .instrucciones-box.open{display:block;}
+    .instrucciones-box ol{padding-left:1.25rem;margin-top:6px;}
+    .instrucciones-box li{margin-bottom:4px;}
+    .instrucciones-box strong{color:var(--azul);}
+    .instrucciones-box .alerta{background:var(--rosa-light);border:1px solid var(--rosa-border);border-radius:var(--radio);padding:8px 12px;margin-top:10px;font-size:12px;color:#7A2A42;}
+    .acordeon-item{border:1px solid var(--borde);border-radius:10px;margin-bottom:8px;overflow:hidden;}
+    .acordeon-header{padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:500;background:var(--blanco);}
+    .acordeon-header:hover{background:var(--gris);}
+    .acordeon-header i.chevron{transition:transform .2s;}
+    .acordeon-header.open i.chevron{transform:rotate(180deg);}
+    .acordeon-body{display:none;padding:1rem 1.25rem;font-size:13px;line-height:1.7;background:var(--blanco);border-top:1px solid var(--borde);}
+    .acordeon-body.open{display:block;}
+    .acordeon-body ol,.acordeon-body ul{padding-left:1.25rem;margin-top:6px;}
+    .acordeon-body li{margin-bottom:6px;}
+    .paso-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--azul);color:#fff;font-size:11px;font-weight:600;margin-right:6px;flex-shrink:0;}
+    .sin-correo{font-size:12px;color:var(--texto-muted);font-style:italic;}
+
     /* BOTÓN AYUDA */
     .btn-ayuda{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0;transition:background .15s;}
     .btn-ayuda:hover{background:rgba(255,255,255,0.25);}
@@ -264,6 +296,9 @@
   </div>
   <div class="tab t-admin" id="tab-admin" onclick="cambiarTab('admin')">
     <i class="ti ti-lock"></i> Administrar
+  </div>
+  <div class="tab t-drive hidden" id="tab-drive" onclick="cambiarTab('drive')">
+    <i class="ti ti-brand-google-drive"></i> Drive
   </div>
 </nav>
 
@@ -398,6 +433,10 @@
                 <label>Rol</label>
                 <select id="nu-rol"><option value="editor">Editor</option><option value="superadmin">Super Admin</option></select>
               </div>
+              <div class="fg full">
+                <label>Correo Gmail <span class="req">*</span> <span style="font-weight:400;">(necesario para acceso a Drive)</span></label>
+                <input type="email" id="nu-correo" placeholder="editor@gmail.com" />
+              </div>
               <div class="fg" style="align-self:flex-end;">
                 <button class="btn-guardar" onclick="crearUsuario()" style="width:100%;justify-content:center;"><i class="ti ti-plus"></i> Crear</button>
               </div>
@@ -415,6 +454,102 @@
           <div class="fsec"><i class="ti ti-clipboard-list"></i> Registro de actividad</div>
           <div id="lista-auditoria"><div class="loading"><i class="ti ti-loader-2"></i></div></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PANEL DRIVE -->
+  <div class="panel" id="panel-drive">
+    <div class="admin-card">
+      <div class="fsec"><i class="ti ti-folder-tree"></i> Estructura de carpetas en Drive</div>
+      <div class="drive-section">
+        <div class="drive-tree">
+          📁 <span>Repositorio CINF Fátima</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;📁 <span>Proyectos Estudiantes</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 2010 · 2011 · ... · 2026<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;📁 <span>Proyectos Docentes</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 2010 · 2011 · ... · 2026
+        </div>
+        <div style="margin-top:10px;">
+          <a class="btn-drive-dar" href="https://drive.google.com/drive/u/0/my-drive" target="_blank" rel="noopener" style="display:inline-flex;">
+            <i class="ti ti-brand-google-drive"></i> Abrir Drive del repositorio
+          </a>
+        </div>
+      </div>
+
+      <div class="fsec"><i class="ti ti-users"></i> Dar o revocar acceso a editores</div>
+      <div class="drive-section" id="drive-editores">
+        <div class="loading"><i class="ti ti-loader-2"></i></div>
+      </div>
+
+      <div class="fsec"><i class="ti ti-book-2"></i> Guía de operaciones en Drive</div>
+      <div class="drive-section">
+
+        <div class="acordeon-item">
+          <div class="acordeon-header" onclick="toggleAcordeon(this)">
+            <span><i class="ti ti-user-plus" style="margin-right:8px;color:var(--azul);"></i> Cómo dar acceso a un editor</span>
+            <i class="ti ti-chevron-down chevron"></i>
+          </div>
+          <div class="acordeon-body">
+            <ol>
+              <li>Abre el Drive usando el botón de arriba.</li>
+              <li>Clic derecho sobre <strong>Repositorio CINF Fátima</strong> → <strong>"Compartir"</strong>.</li>
+              <li>Escribe el correo del editor.</li>
+              <li>Cambia el permiso a <strong>"Colaborador"</strong>.</li>
+              <li>Clic en <strong>"Enviar"</strong>.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="acordeon-item">
+          <div class="acordeon-header" onclick="toggleAcordeon(this)">
+            <span><i class="ti ti-user-minus" style="margin-right:8px;color:#9B3A57;"></i> Cómo revocar acceso a un editor</span>
+            <i class="ti ti-chevron-down chevron"></i>
+          </div>
+          <div class="acordeon-body">
+            <ol>
+              <li>Abre el Drive usando el botón de arriba.</li>
+              <li>Clic derecho sobre <strong>Repositorio CINF Fátima</strong> → <strong>"Compartir"</strong>.</li>
+              <li>Busca el correo del editor y haz clic en el ícono de <strong>basura</strong>.</li>
+              <li>Clic en <strong>"Guardar"</strong>.</li>
+            </ol>
+            <div style="background:var(--rosa-light);border:1px solid var(--rosa-border);border-radius:var(--radio);padding:8px 12px;margin-top:10px;font-size:12px;color:#7A2A42;">
+              Los archivos subidos por el editor permanecen en Drive. Solo pierde el acceso para subir nuevos.
+            </div>
+          </div>
+        </div>
+
+        <div class="acordeon-item">
+          <div class="acordeon-header" onclick="toggleAcordeon(this)">
+            <span><i class="ti ti-link" style="margin-right:8px;color:var(--azul);"></i> Cómo obtener el enlace de un PDF</span>
+            <i class="ti ti-chevron-down chevron"></i>
+          </div>
+          <div class="acordeon-body">
+            <ol>
+              <li>Sube el PDF a la carpeta del año correspondiente.</li>
+              <li>Clic derecho sobre el archivo → <strong>"Obtener enlace"</strong>.</li>
+              <li>Cambia el acceso a <strong>"Cualquier persona con el enlace"</strong>.</li>
+              <li>Clic en <strong>"Copiar enlace"</strong>.</li>
+              <li>Pega el enlace en el campo <strong>"Enlace al PDF"</strong> del formulario.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="acordeon-item">
+          <div class="acordeon-header" onclick="toggleAcordeon(this)">
+            <span><i class="ti ti-folder-plus" style="margin-right:8px;color:var(--azul);"></i> Cómo organizar los archivos por año</span>
+            <i class="ti ti-chevron-down chevron"></i>
+          </div>
+          <div class="acordeon-body">
+            <ol>
+              <li>Dentro de <strong>Proyectos Estudiantes</strong> o <strong>Proyectos Docentes</strong>, crea una carpeta con el año (ej: <strong>2024</strong>).</li>
+              <li>Nombra cada PDF con el formato: <strong>APELLIDO_Titulo_Año.pdf</strong></li>
+              <li>Sube el archivo a la carpeta del año correspondiente.</li>
+            </ol>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -587,9 +722,10 @@ function cerrarModal(e) {
 // ── TABS ──
 function cambiarTab(t) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(tab=>tab.classList.remove('active'));
   document.getElementById('panel-'+t).classList.add('active');
   document.getElementById('tab-'+t).classList.add('active');
+  if(t==='drive') cargarDrive();
 }
 
 // ── LOGIN ──
@@ -607,6 +743,9 @@ async function doLogin() {
       document.getElementById('huser').style.display='flex';
       document.getElementById('huser-name').textContent = d.usuario+' ('+d.rol+')';
       document.getElementById('hbadge').style.display='none';
+      if(d.rol==='maestro'||d.rol==='superadmin'){
+        document.getElementById('tab-drive').classList.remove('hidden');
+      }
       mostrarBienvenida(d.rol);
       iniciarTimerInactividad();
       // ocultar pestaña usuarios/auditoría si es editor
@@ -636,6 +775,7 @@ function cerrarSesion() {
   document.getElementById('lg-pass').value='';
   document.getElementById('lg-err').style.display='none';
   document.getElementById('atab-usuarios').style.display='';
+  document.getElementById('tab-drive').classList.add('hidden');
   document.getElementById('atab-auditoria').style.display='';
   document.getElementById('nu-rol-campo').style.display='';
   cambiarATab('ingresar');
@@ -755,15 +895,18 @@ async function crearUsuario() {
   if(!nu||!nc) { msg.textContent='Completa usuario y contraseña.'; msg.className='fmsg err'; return; }
   if(nc.length<6) { msg.textContent='La contraseña debe tener al menos 6 caracteres.'; msg.className='fmsg err'; return; }
   try {
+    const correo = document.getElementById('nu-correo').value.trim();
+    if(!correo){ msg.textContent='El correo es obligatorio.'; msg.className='fmsg err'; return; }
     const r = await fetch(BACKEND,{method:'POST',body:JSON.stringify({
       accion:'crearUsuario', usuario:SESSION.usuario, clave:SESSION.clave,
-      nuevoUsuario:nu, nuevaClave:nc, rolNuevo:nr
+      nuevoUsuario:nu, nuevaClave:nc, rolNuevo:nr, correo
     })});
     const d = await r.json();
     if(d.ok) {
       msg.textContent='Usuario creado correctamente.'; msg.className='fmsg ok';
       document.getElementById('nu-user').value='';
       document.getElementById('nu-pass').value='';
+      document.getElementById('nu-correo').value='';
       cargarUsuarios();
     } else { msg.textContent='Error: '+(d.error||'intenta de nuevo'); msg.className='fmsg err'; }
   } catch(e) { msg.textContent='Error de conexión.'; msg.className='fmsg err'; }
@@ -942,6 +1085,102 @@ function iniciarTimerInactividad() {
   _inactTimer = setTimeout(()=>{ if(SESSION){ cerrarSesion(); alert('Sesión cerrada por inactividad.'); } }, 20*60*1000);
 }
 ['click','keydown','mousemove'].forEach(ev => document.addEventListener(ev, ()=>{ if(SESSION) resetInactividad(); }, {passive:true}));
+
+
+// ── DRIVE ──
+async function cargarDrive() {
+  if(!SESSION) return;
+  const cont = document.getElementById('drive-editores');
+  cont.innerHTML = '<div class="loading"><i class="ti ti-loader-2"></i></div>';
+  try {
+    const r = await fetch(`${BACKEND}?accion=usuarios&usuario=${encodeURIComponent(SESSION.usuario)}&clave=${encodeURIComponent(SESSION.clave)}`);
+    const d = await r.json();
+    if(!d.ok) { cont.innerHTML='<p style="color:var(--err);font-size:13px;">'+d.error+'</p>'; return; }
+    const editores = d.usuarios.filter(u => u.rol==='editor');
+    if(!editores.length) {
+      cont.innerHTML='<p style="font-size:13px;color:var(--texto-muted);">No hay editores registrados aún.</p>';
+      return;
+    }
+    cont.innerHTML = editores.map(u => {
+      const ini = u.usuario.charAt(0).toUpperCase();
+      const activo = ['TRUE','VERDADERO'].includes(String(u.activo).toUpperCase());
+      const correo = u.correo || '';
+      return `<div class="drive-editor-card">
+        <div class="drive-editor-top">
+          <div class="drive-editor-info">
+            <div class="uavatar">${ini}</div>
+            <div>
+              <div class="unombre">${u.usuario}</div>
+              ${correo
+                ? `<div class="drive-editor-correo"><i class="ti ti-mail" style="font-size:11px;"></i> ${correo}</div>`
+                : `<div class="sin-correo">Sin correo registrado</div>`}
+            </div>
+          </div>
+          <div class="drive-editor-acciones">
+            ${correo ? `
+            <button class="btn-drive-dar" onclick="mostrarInstruccionesDrive('dar','${correo}','${u.usuario}')">
+              <i class="ti ti-user-plus"></i> Dar acceso
+            </button>
+            <button class="btn-drive-revocar" onclick="mostrarInstruccionesDrive('revocar','${correo}','${u.usuario}')">
+              <i class="ti ti-user-minus"></i> Revocar acceso
+            </button>` : `<span class="sin-correo">Agrega el correo del editor para gestionar su acceso</span>`}
+          </div>
+        </div>
+        <div class="instrucciones-box" id="inst-${u.usuario}"></div>
+      </div>`;
+    }).join('');
+  } catch(e) { cont.innerHTML='<p style="color:var(--err);font-size:13px;">Error de conexión.</p>'; }
+}
+
+function mostrarInstruccionesDrive(accion, correo, usuario) {
+  const box = document.getElementById('inst-'+usuario);
+  if(!box) return;
+  const esDar = accion === 'dar';
+  const pasos = esDar ? [
+    `Abre el Drive del repositorio usando el botón <strong>"Abrir Drive del repositorio"</strong> de arriba.`,
+    `Haz clic derecho sobre la carpeta <strong>Repositorio CINF Fátima</strong>.`,
+    `Selecciona <strong>"Compartir"</strong>.`,
+    `En el campo de correo escribe: <strong>${correo}</strong>`,
+    `Cambia el permiso a <strong>"Colaborador"</strong>.`,
+    `Haz clic en <strong>"Enviar"</strong>.`
+  ] : [
+    `Abre el Drive del repositorio usando el botón de arriba.`,
+    `Haz clic derecho sobre la carpeta <strong>Repositorio CINF Fátima</strong>.`,
+    `Selecciona <strong>"Compartir"</strong>.`,
+    `Busca <strong>${correo}</strong> en la lista de personas con acceso.`,
+    `Haz clic en el ícono de <strong>basura</strong> junto a su nombre.`,
+    `Haz clic en <strong>"Guardar"</strong>.`
+  ];
+  const alerta = !esDar
+    ? `<div class="alerta"><i class="ti ti-alert-triangle"></i> Los archivos que subió permanecen en Drive. Solo pierde el acceso para subir nuevos.</div>`
+    : '';
+  const contenido = `
+    <strong style="color:${esDar?'var(--azul)':'#9B3A57'};">
+      <i class="ti ti-${esDar?'user-plus':'user-minus'}"></i>
+      ${esDar?'Pasos para dar acceso a':'Pasos para revocar acceso de'} ${usuario}
+    </strong>
+    <ol style="margin-top:8px;padding-left:1.25rem;">
+      ${pasos.map(p=>`<li style="margin-bottom:6px;">${p}</li>`).join('')}
+    </ol>
+    ${alerta}`;
+
+  if(box.classList.contains('open') && box.dataset.accion === accion) {
+    box.classList.remove('open');
+    box.innerHTML='';
+    box.dataset.accion='';
+  } else {
+    box.innerHTML = contenido;
+    box.classList.add('open');
+    box.dataset.accion = accion;
+  }
+}
+
+function toggleAcordeon(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
 
 // ── VER CONTRASEÑA ──
 function toggleOjo(inputId, btn) {
