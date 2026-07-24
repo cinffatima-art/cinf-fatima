@@ -387,7 +387,7 @@
         </div>
         <div class="fsec"><i class="ti ti-file-text"></i> Contenido académico</div>
         <div class="fgrid">
-          <div class="fg full"><label>Resumen / Abstract</label><textarea id="f-resumen" placeholder="Resumen del proyecto..." oninput="contarChars('f-resumen','cnt-resumen',600)" maxlength="600"></textarea><div class="char-count" id="cnt-resumen">0 / 600 caracteres</div></div>
+          <div class="fg full"><label>Resumen / Abstract</label><textarea id="f-resumen" placeholder="Resumen del proyecto..." oninput="contarChars('f-resumen','cnt-resumen',2000)" maxlength="2000"></textarea><div class="char-count" id="cnt-resumen">0 / 2000 caracteres</div></div>
           <div class="fg full" id="c-pregunta"><label>Pregunta problema</label><textarea id="f-pregunta" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
           <div class="fg full"><label>Objetivo general</label><textarea id="f-objetivo" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
           <div class="fg full" id="c-aportes" style="display:none;"><label>Aportes / Productos</label><textarea id="f-aportes" placeholder="Opcional..." style="min-height:60px;"></textarea></div>
@@ -472,9 +472,12 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📁 2010 · 2011 · ... · 2026
         </div>
         <div style="margin-top:10px;">
-          <a class="btn-drive-dar" href="https://drive.google.com/drive/folders/1h41eRe6LoqnSlZmOdjx0cB-bs2eUdfqD" target="_blank" rel="noopener" style="display:inline-flex;">
-            <i class="ti ti-brand-google-drive"></i> Abrir Drive del repositorio
-          </a>
+          <div style="margin-top:10px;">
+            <a class="btn-drive-dar" href="https://drive.google.com/drive/folders/1h41eRe6LoqnSlZmOdjx0cB-bs2eUdfqD" target="_blank" rel="noopener" style="display:inline-flex;">
+              <i class="ti ti-brand-google-drive"></i> Abrir Repositorio CINF Fatima
+            </a>
+            <p style="font-size:12px;color:var(--texto-muted);margin-top:6px;"><i class="ti ti-info-circle" style="font-size:12px;"></i> Desde aquí haz clic derecho sobre la carpeta <strong>Proyectos</strong> para compartirla con los editores.</p>
+          </div>
         </div>
       </div>
 
@@ -1194,31 +1197,43 @@ function toggleOjo(inputId, btn) {
 // ── BIENVENIDA ──
 const AYUDA = {
   publico: [
-    { icon:'ti-search', titulo:'Buscar proyectos', desc:'Usa la barra de búsqueda para encontrar proyectos por título, autor o palabra clave.' },
-    { icon:'ti-filter', titulo:'Filtrar resultados', desc:'Filtra por tipo de proyecto, año, categoría o disponibilidad de PDF.' },
-    { icon:'ti-info-circle', titulo:'Ver detalles', desc:'Haz clic en "Ver detalles" para consultar el resumen completo, autores y objetivo de cada proyecto.' },
-    { icon:'ti-file-type-pdf', titulo:'Consultar PDF', desc:'Si el proyecto tiene versión digital, el botón "Ver PDF" te lleva al documento completo.' },
+    { icon:'ti-search', titulo:'¿Cómo busco un proyecto?', desc:'Escribe en la barra de búsqueda el título, nombre del autor o una palabra clave. Los resultados aparecen automáticamente debajo.' },
+    { icon:'ti-filter', titulo:'¿Cómo filtro los resultados?', desc:'Usa los desplegables debajo de la barra: puedes filtrar por tipo (trabajo de grado o proyecto docente), año, categoría o si tiene PDF disponible. Para quitar todos los filtros usa el botón "Limpiar filtros" a la derecha.' },
+    { icon:'ti-info-circle', titulo:'¿Cómo veo los detalles de un proyecto?', desc:'Haz clic en el botón "Ver detalles" de cualquier resultado. Se abrirá una ventana con el resumen completo, autores, objetivo y toda la información registrada del proyecto.' },
+    { icon:'ti-file-type-pdf', titulo:'¿Cómo consulto el documento completo?', desc:'Si el proyecto tiene versión digital, aparece un botón rosado "Ver PDF" que abre el documento en Google Drive. Si dice "Solo físico", el trabajo solo está disponible en el Centro de Investigaciones — la tarjeta indica el estante y sección donde se encuentra.' },
+    { icon:'ti-question-mark', titulo:'¿Cómo accedo a esta ayuda de nuevo?', desc:'Haz clic en el botón con el signo de interrogación (?) en la esquina superior derecha del encabezado. La ayuda se adapta a tu rol.' },
   ],
   editor: [
-    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Puedes buscar y explorar todos los proyectos del repositorio.' },
-    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Desde la pestaña "Administrar" puedes cargar nuevos proyectos llenando el formulario.' },
-    { icon:'ti-map-pin', titulo:'Ubicación física', desc:'Registra siempre el estante y sección donde está el trabajo físico.' },
-    { icon:'ti-link', titulo:'Enlace PDF', desc:'Si el proyecto tiene versión digital, pega el enlace de Google Drive en el campo correspondiente.' },
+    { icon:'ti-login', titulo:'¿Cómo ingreso al sistema?', desc:'Haz clic en la pestaña "Administrar" en la parte superior. Escribe tu usuario y contraseña y presiona "Ingresar". Si no puedes entrar, contacta al administrador para verificar tus credenciales o solicitar un reseteo de contraseña.' },
+    { icon:'ti-plus', titulo:'¿Cómo cargo un nuevo proyecto?', desc:'Dentro del panel de administración verás el formulario de ingreso. Los campos marcados con asterisco rojo (*) son obligatorios: tipo de proyecto, año, título, autores y tipo de acceso. Llena toda la información disponible y haz clic en "Guardar proyecto". El sistema te pedirá confirmación antes de registrar.' },
+    { icon:'ti-file-type-pdf', titulo:'¿Cómo subo el PDF del proyecto?', desc:'Paso 1: Abre Google Drive e ingresa a la carpeta "Proyectos" que fue compartida contigo. Paso 2: Entra a "Proyectos Estudiantes" o "Proyectos Docentes" según corresponda. Paso 3: Entra a la carpeta del año del proyecto (ej: 2024). Paso 4: Arrastra o sube el archivo PDF ahí. Paso 5: Haz clic derecho sobre el archivo subido y selecciona "Obtener enlace". Paso 6: Cambia el acceso a "Cualquier persona con el enlace" y haz clic en "Copiar enlace". Paso 7: Vuelve al formulario de la plataforma y pega el enlace en el campo "Enlace al PDF en Google Drive".' },
+    { icon:'ti-map-pin', titulo:'¿Qué pongo en ubicación física?', desc:'Escribe el estante y sección donde se encuentra el trabajo impreso en el Centro de Investigaciones. Ejemplo: "Estante 2, Sección A". Si el proyecto es solo digital, puedes dejar este campo vacío.' },
+    { icon:'ti-eye', titulo:'¿Cómo veo mi contraseña al escribirla?', desc:'En cualquier campo de contraseña verás un ícono de ojo a la derecha. Haz clic en él para mostrar u ocultar lo que estás escribiendo.' },
+    { icon:'ti-search', titulo:'¿Puedo consultar proyectos?', desc:'Sí. La pestaña "Consultar proyectos" está disponible para todos, incluidos los editores. Puedes buscar, filtrar y ver los detalles de cualquier proyecto del repositorio.' },
+    { icon:'ti-question-mark', titulo:'¿Cómo accedo a esta ayuda de nuevo?', desc:'Haz clic en el botón (?) en la esquina superior derecha del encabezado azul.' },
   ],
   superadmin: [
-    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Puedes buscar y explorar todos los proyectos del repositorio.' },
-    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Carga nuevos proyectos desde la pestaña "Administrar".' },
-    { icon:'ti-users', titulo:'Gestionar editores', desc:'Crea, activa o desactiva usuarios editores. Solo puedes ver y gestionar los que tú has creado.' },
-    { icon:'ti-key', titulo:'Resetear contraseñas', desc:'Puedes cambiar la contraseña de tus editores y también cambiar la tuya propia.' },
-    { icon:'ti-clipboard-list', titulo:'Auditoría', desc:'Consulta el registro de actividad de tus editores y de tu propia cuenta.' },
+    { icon:'ti-login', titulo:'¿Cómo ingreso al sistema?', desc:'Haz clic en "Administrar" y escribe tu usuario y contraseña. Como Super Admin tienes acceso a cuatro secciones: Ingresar proyecto, Usuarios, Auditoría y la pestaña Drive.' },
+    { icon:'ti-plus', titulo:'¿Cómo cargo un proyecto?', desc:'En "Administrar" → "Ingresar proyecto". Llena el formulario completo — los campos con asterisco rojo (*) son obligatorios. El sistema te pedirá confirmación antes de guardar.' },
+    { icon:'ti-file-type-pdf', titulo:'¿Cómo subo el PDF del proyecto?', desc:'Paso 1: Abre Google Drive e ingresa a la carpeta "Proyectos" que fue compartida contigo. Paso 2: Entra a "Proyectos Estudiantes" o "Proyectos Docentes" según corresponda. Paso 3: Entra a la carpeta del año (ej: 2024). Paso 4: Sube el archivo PDF. Paso 5: Clic derecho sobre el archivo → "Obtener enlace" → cambia a "Cualquier persona con el enlace" → "Copiar enlace". Paso 6: Pega el enlace en el campo "Enlace al PDF" del formulario.' },
+    { icon:'ti-users', titulo:'¿Cómo creo un editor?', desc:'En "Administrar" → "Usuarios" → sección "Crear nuevo usuario". Escribe nombre de usuario (sin espacios), contraseña (mínimo 6 caracteres) y el correo Gmail del editor. El correo es obligatorio porque se usa para darle acceso al Drive.' },
+    { icon:'ti-brand-google-drive', titulo:'¿Cómo le doy acceso al Drive a un editor?', desc:'Ve a la pestaña "Drive". Verás la lista de editores con sus correos. Haz clic en "Dar acceso" junto al editor y se despliegan las instrucciones exactas. En resumen: abre el Drive del repositorio, clic derecho sobre la carpeta "Proyectos" (sin entrar), Compartir, escribe el correo del editor, permiso "Colaborador", Enviar y confirma compartir con subcarpetas.' },
+    { icon:'ti-user-minus', titulo:'¿Cómo revoco el acceso al Drive?', desc:'En la pestaña "Drive", haz clic en "Revocar acceso" junto al editor. Se despliegan las instrucciones: abre el Drive, clic derecho sobre "Proyectos", Compartir, busca el correo, elimina con el ícono de basura y confirma quitar acceso a subcarpetas.' },
+    { icon:'ti-key', titulo:'¿Cómo manejo contraseñas?', desc:'Puedes cambiar tu propia contraseña desde "Usuarios" → "Cambiar mi contraseña". Para tus editores, usa el botón "Resetear clave" en la tarjeta de cada uno — le asignas una nueva clave que debes comunicarle.' },
+    { icon:'ti-clipboard-list', titulo:'¿Qué veo en Auditoría?', desc:'Un registro cronológico de todas las acciones realizadas por ti y por los editores que creaste: proyectos ingresados, usuarios creados, contraseñas cambiadas, con fecha y hora exactas.' },
+    { icon:'ti-question-mark', titulo:'¿Cómo accedo a esta ayuda de nuevo?', desc:'Haz clic en el botón (?) en la esquina superior derecha.' },
   ],
   maestro: [
-    { icon:'ti-search', titulo:'Consultar proyectos', desc:'Acceso completo a todos los proyectos del repositorio.' },
-    { icon:'ti-plus', titulo:'Ingresar proyectos', desc:'Carga nuevos proyectos desde la pestaña "Administrar".' },
-    { icon:'ti-users', titulo:'Gestionar todos los usuarios', desc:'Crea superadmins y editores, activa o desactiva cualquier cuenta.' },
-    { icon:'ti-key', titulo:'Resetear contraseñas', desc:'Puedes resetear la contraseña de cualquier usuario del sistema.' },
-    { icon:'ti-clipboard-list', titulo:'Auditoría completa', desc:'Ves el registro de actividad de todos los usuarios sin excepción.' },
-    { icon:'ti-shield', titulo:'Control total', desc:'Eres el único que puede crear superadministradores y ver toda la actividad del sistema.' },
+    { icon:'ti-login', titulo:'¿Cómo ingreso al sistema?', desc:'Haz clic en "Administrar" y escribe tu usuario y contraseña maestra. Tienes acceso total a todas las funciones: Ingresar proyecto, Usuarios, Auditoría y la pestaña Drive.' },
+    { icon:'ti-plus', titulo:'¿Cómo cargo un proyecto?', desc:'En "Administrar" → "Ingresar proyecto". Llena el formulario — los campos con asterisco rojo (*) son obligatorios. El sistema te pedirá confirmación antes de registrar.' },
+    { icon:'ti-file-type-pdf', titulo:'¿Cómo subo el PDF del proyecto?', desc:'Paso 1: Abre Google Drive con la cuenta cinffatima — usa el botón en la pestaña "Drive" o entra directo a drive.google.com. Paso 2: Ve a Repositorio CINF Fatima → Proyectos → Proyectos Estudiantes o Docentes → carpeta del año. Paso 3: Sube el PDF. Paso 4: Clic derecho sobre el archivo → "Obtener enlace" → cambia a "Cualquier persona con el enlace" → "Copiar enlace". Paso 5: Pega el enlace en el campo "Enlace al PDF" del formulario.' },
+    { icon:'ti-users', titulo:'¿Cómo gestiono usuarios?', desc:'En "Usuarios" puedes crear editores y superadministradores. Para cada uno defines: nombre de usuario (sin espacios), contraseña (mínimo 6 caracteres), rol y correo Gmail. Puedes activar o desactivar cualquier cuenta del sistema.' },
+    { icon:'ti-brand-google-drive', titulo:'¿Cómo gestiono el acceso al Drive?', desc:'En la pestaña "Drive" ves todos los editores y sus correos. Usa los botones "Dar acceso" o "Revocar acceso" para ver instrucciones paso a paso. Importante: se comparte la carpeta "Proyectos", nunca la raíz "Repositorio CINF Fatima".' },
+    { icon:'ti-user-minus', titulo:'¿Cómo revoco el acceso al Drive?', desc:'En la pestaña "Drive", haz clic en "Revocar acceso" junto al editor. Se muestran los pasos: abrir Drive, clic derecho sobre "Proyectos", Compartir, buscar el correo, eliminar con el ícono de basura y confirmar.' },
+    { icon:'ti-key', titulo:'¿Cómo manejo contraseñas?', desc:'Puedes cambiar tu propia contraseña desde "Usuarios". Para cualquier otro usuario — editor o superadmin — usa el botón "Resetear clave" en su tarjeta y asígnale una nueva.' },
+    { icon:'ti-clipboard-list', titulo:'¿Qué veo en Auditoría?', desc:'El registro completo de actividad de todos los usuarios sin excepción: proyectos ingresados, usuarios creados o desactivados, contraseñas reseteadas, con fecha, hora y nombre del responsable.' },
+    { icon:'ti-shield', titulo:'¿Qué puedo hacer que otros no?', desc:'Solo el maestro puede: crear superadministradores, ver la actividad de absolutamente todos los usuarios, resetear contraseñas de cualquier cuenta incluyendo superadmins, y acceder directamente al Google Sheet y al Drive raíz del repositorio.' },
+    { icon:'ti-question-mark', titulo:'¿Cómo accedo a esta ayuda de nuevo?', desc:'Haz clic en el botón (?) en la esquina superior derecha del encabezado azul.' },
   ]
 };
 
