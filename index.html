@@ -166,6 +166,17 @@
     .nuform .fgrid{grid-template-columns:1fr 1fr;}
 
     
+
+    /* EDITAR/ELIMINAR */
+    .btn-editar{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--celeste-border);background:var(--celeste-light);color:#1E4D66;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;}
+    .btn-editar:hover{background:var(--celeste-border);}
+    .btn-eliminar{font-size:12px;padding:5px 12px;border-radius:var(--radio);border:1px solid var(--rosa-border);background:var(--rosa-light);color:#7A2A42;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;}
+    .btn-eliminar:hover{background:var(--rosa-border);}
+    /* EXPORTAR */
+    .btn-exportar{background:var(--azul);color:#fff;border:none;border-radius:var(--radio);padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;font-weight:500;}
+    .btn-exportar:hover{background:var(--azul-dark);}
+    .export-bar{display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap;}
+
     /* VER CONTRASEÑA */
     .pwd-wrap{position:relative;display:flex;align-items:center;}
     .pwd-wrap input{flex:1;padding-right:38px;}
@@ -324,7 +335,7 @@
         <option value="fisico">Solo físico</option>
       </select>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><div class="rcount" id="rcount"></div><button class="btn-limpiar" onclick="limpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:8px;"><div class="rcount" id="rcount"></div><div style="display:flex;gap:8px;"><button class="btn-exportar" onclick="exportarExcel()"><i class="ti ti-download"></i> Exportar Excel</button><button class="btn-limpiar" onclick="limpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button></div></div>
     <div id="resultados"><div class="empty"><i class="ti ti-search"></i>Ingresa un término de búsqueda<br>o selecciona un filtro para comenzar.</div></div>
   </div>
 
@@ -481,7 +492,7 @@
         </div>
       </div>
 
-      <div class="fsec"><i class="ti ti-users"></i> Dar o revocar acceso a editores</div>
+      <div class="fsec"><i class="ti ti-users"></i> Dar o revocar acceso a usuarios</div>
       <div class="drive-section" id="drive-editores">
         <div class="loading"><i class="ti ti-loader-2"></i></div>
       </div>
@@ -691,6 +702,8 @@ function renderResultados(lista) {
       </div>${res}
       <div class="ractions">
         <button class="btn-det" onclick="verDetalle(${i})"><i class="ti ti-info-circle"></i> Ver detalles</button>${acc}
+        ${SESSION && (SESSION.rol==='maestro'||SESSION.rol==='superadmin') ? `<button class="btn-editar" onclick="abrirEditar(${i})"><i class="ti ti-pencil"></i> Editar</button>` : ''}
+        ${SESSION && SESSION.rol==='maestro' ? `<button class="btn-eliminar" onclick="confirmarEliminar(${i})"><i class="ti ti-trash"></i> Eliminar</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1010,6 +1023,156 @@ async function cargarAuditoria() {
 
 
 
+
+// ── EDITAR PROYECTO ──
+function abrirEditar(idx) {
+  const p = LISTA_ACTUAL[idx];
+  if(!p) return;
+  const esDoc = p.tipo === 'docente';
+  
+  const campos = [
+    {label:'Año', id:'ed-anio', type:'number', val:p['Año']||''},
+    {label:'Título', id:'ed-titulo', type:'text', val:p['Título']||'', full:true},
+    {label:'Autores', id:'ed-autores', type:'text', val:p['Autores']||'', full:true},
+  ];
+  
+  if(!esDoc) campos.push({label:'Semillero / Núcleo', id:'ed-semillero', type:'text', val:p['Semillero']||''});
+  if(esDoc) campos.push({label:'Línea investigación', id:'ed-linea', type:'text', val:p['Línea_Investigación']||''});
+  
+  campos.push({label:'Categoría', id:'ed-categoria', type:'text', val:p['Categoría']||''});
+  
+  if(esDoc) campos.push({label:'Tipo proyecto', id:'ed-tipoinv', type:'text', val:p['Tipo_Proyecto']||''});
+  
+  campos.push(
+    {label:'Objetivo general', id:'ed-objetivo', type:'textarea', val:p['Objetivo_General']||'', full:true},
+    {label:'Resumen', id:'ed-resumen', type:'textarea', val:p['Resumen']||'', full:true}
+  );
+  
+  if(!esDoc) campos.push({label:'Pregunta problema', id:'ed-pregunta', type:'textarea', val:p['Pregunta_Problema']||'', full:true});
+  if(esDoc) campos.push({label:'Aportes / Productos', id:'ed-aportes', type:'textarea', val:p['Aportes_Productos']||'', full:true});
+  
+  campos.push(
+    {label:'Ubicación física', id:'ed-ubicacion', type:'text', val:p['Ubicacion_Fisica']||''},
+    {label:'Tipo de acceso', id:'ed-acceso', type:'select', val:p['Tipo_Acceso']||'', opts:['Físico','Ambos','Digital']},
+    {label:'URL PDF', id:'ed-pdf', type:'text', val:p['URL_PDF']||'', full:true}
+  );
+  
+  let formHTML = `<div class="modal-title" style="margin-bottom:1rem;">Editar proyecto: ${p['ID']||''}</div>
+    <div class="fgrid">`;
+  
+  campos.forEach(c => {
+    const fullClass = c.full ? ' full' : '';
+    if(c.type === 'textarea') {
+      formHTML += `<div class="fg${fullClass}"><label>${c.label}</label><textarea id="${c.id}" style="min-height:70px;">${c.val}</textarea></div>`;
+    } else if(c.type === 'select') {
+      const opts = c.opts.map(o => `<option ${o===c.val?'selected':''}>${o}</option>`).join('');
+      formHTML += `<div class="fg${fullClass}"><label>${c.label}</label><select id="${c.id}">${opts}</select></div>`;
+    } else {
+      formHTML += `<div class="fg${fullClass}"><label>${c.label}</label><input type="${c.type}" id="${c.id}" value="${String(c.val).replace(/"/g,'&quot;')}" /></div>`;
+    }
+  });
+  
+  formHTML += `</div>
+    <p class="fmsg" id="ed-msg" style="margin-top:8px;"></p>
+    <div style="display:flex;gap:8px;margin-top:1rem;">
+      <button class="btn-guardar" onclick="ejecutarEditar('${p['ID']||''}','${p.tipo}')"><i class="ti ti-device-floppy"></i> Guardar cambios</button>
+      <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+    </div>`;
+  
+  document.getElementById('modal-cont').innerHTML = formHTML;
+  document.getElementById('overlay').classList.add('open');
+}
+
+async function ejecutarEditar(id, tipo) {
+  const esDoc = tipo === 'docente';
+  const datos = {
+    accion:'editar', usuario:SESSION.usuario, clave:SESSION.clave,
+    id, tipo,
+    anio: document.getElementById('ed-anio').value,
+    titulo: document.getElementById('ed-titulo').value,
+    autores: document.getElementById('ed-autores').value,
+    semillero: document.getElementById('ed-semillero')?.value || '',
+    linea_investigacion: document.getElementById('ed-linea')?.value || '',
+    tipo_proyecto: document.getElementById('ed-tipoinv')?.value || '',
+    categoria: document.getElementById('ed-categoria').value,
+    objetivo_general: document.getElementById('ed-objetivo').value,
+    resumen: document.getElementById('ed-resumen').value,
+    pregunta_problema: document.getElementById('ed-pregunta')?.value || '',
+    aportes_productos: document.getElementById('ed-aportes')?.value || '',
+    ubicacion_fisica: document.getElementById('ed-ubicacion').value,
+    tipo_acceso: document.getElementById('ed-acceso').value,
+    url_pdf: document.getElementById('ed-pdf').value,
+  };
+  const msg = document.getElementById('ed-msg');
+  try {
+    const r = await fetch(BACKEND,{method:'POST',body:JSON.stringify(datos)});
+    const d = await r.json();
+    if(d.ok) {
+      msg.textContent='Proyecto actualizado correctamente.'; msg.className='fmsg ok';
+      setTimeout(async ()=>{ cerrarModal(); await init(); buscar(); }, 1500);
+    } else { msg.textContent='Error: '+(d.error||'intenta de nuevo'); msg.className='fmsg err'; }
+  } catch(e) { msg.textContent='Error de conexión.'; msg.className='fmsg err'; }
+}
+
+// ── ELIMINAR PROYECTO ──
+function confirmarEliminar(idx) {
+  const p = LISTA_ACTUAL[idx];
+  if(!p) return;
+  mostrarConfirm(
+    '¿Eliminar proyecto?',
+    `Se eliminará permanentemente "${p['Título']}" (${p['ID']}). Esta acción no se puede deshacer.`,
+    () => ejecutarEliminar(p['ID'], p.tipo),
+    true
+  );
+}
+
+async function ejecutarEliminar(id, tipo) {
+  try {
+    const r = await fetch(BACKEND,{method:'POST',body:JSON.stringify({
+      accion:'eliminar', usuario:SESSION.usuario, clave:SESSION.clave, id, tipo
+    })});
+    const d = await r.json();
+    if(d.ok) {
+      await init();
+      buscar();
+    } else { alert('Error: '+(d.error||'intenta de nuevo')); }
+  } catch(e) { alert('Error de conexión.'); }
+}
+
+// ── EXPORTAR A EXCEL ──
+function exportarExcel() {
+  if(!LISTA_ACTUAL.length) { alert('No hay resultados para exportar.'); return; }
+  
+  const encabezados = ['ID','Tipo','Año','Título','Autores','Categoría','Resumen','Ubicación Física','Tipo Acceso','URL PDF'];
+  const filas = LISTA_ACTUAL.map(p => [
+    p['ID']||'',
+    p.tipo==='estudiante'?'Trabajo de grado':'Proyecto docente',
+    p['Año']||'',
+    p['Título']||'',
+    p['Autores']||'',
+    p['Categoría']||'',
+    p['Resumen']||'',
+    p['Ubicacion_Fisica']||'',
+    p['Tipo_Acceso']||'',
+    p['URL_PDF']||''
+  ]);
+  
+  let csv = '\uFEFF'; // BOM para Excel
+  csv += encabezados.map(h => '"'+h+'"').join(';') + '\n';
+  filas.forEach(f => {
+    csv += f.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(';') + '\n';
+  });
+  
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const hoy = new Date().toISOString().slice(0,10);
+  a.download = 'CINF_Fatima_Proyectos_'+hoy+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── AYUDA MANUAL ──
 function mostrarAyudaManual() {
   const rol = SESSION ? SESSION.rol : 'publico';
@@ -1099,9 +1262,9 @@ async function cargarDrive() {
     const r = await fetch(`${BACKEND}?accion=usuarios&usuario=${encodeURIComponent(SESSION.usuario)}&clave=${encodeURIComponent(SESSION.clave)}`);
     const d = await r.json();
     if(!d.ok) { cont.innerHTML='<p style="color:var(--err);font-size:13px;">'+d.error+'</p>'; return; }
-    const editores = d.usuarios.filter(u => u.rol==='editor');
+    const editores = d.usuarios.filter(u => u.rol==='editor' || u.rol==='superadmin');
     if(!editores.length) {
-      cont.innerHTML='<p style="font-size:13px;color:var(--texto-muted);">No hay editores registrados aún.</p>';
+      cont.innerHTML='<p style="font-size:13px;color:var(--texto-muted);">No hay editores ni superadmins registrados aún.</p>';
       return;
     }
     cont.innerHTML = editores.map(u => {
@@ -1217,7 +1380,7 @@ const AYUDA = {
     { icon:'ti-plus', titulo:'¿Cómo cargo un proyecto?', desc:'En "Administrar" → "Ingresar proyecto". Llena el formulario completo — los campos con asterisco rojo (*) son obligatorios. El sistema te pedirá confirmación antes de guardar.' },
     { icon:'ti-file-type-pdf', titulo:'¿Cómo subo el PDF del proyecto?', desc:'Paso 1: Abre Google Drive e ingresa a la carpeta "Proyectos" que fue compartida contigo. Paso 2: Entra a "Proyectos Estudiantes" o "Proyectos Docentes" según corresponda. Paso 3: Entra a la carpeta del año (ej: 2024). Paso 4: Sube el archivo PDF. Paso 5: Clic derecho sobre el archivo → "Obtener enlace" → cambia a "Cualquier persona con el enlace" → "Copiar enlace". Paso 6: Pega el enlace en el campo "Enlace al PDF" del formulario.' },
     { icon:'ti-users', titulo:'¿Cómo creo un editor?', desc:'En "Administrar" → "Usuarios" → sección "Crear nuevo usuario". Escribe nombre de usuario (sin espacios), contraseña (mínimo 6 caracteres) y el correo Gmail del editor. El correo es obligatorio porque se usa para darle acceso al Drive.' },
-    { icon:'ti-brand-google-drive', titulo:'¿Cómo le doy acceso al Drive a un editor?', desc:'Ve a la pestaña "Drive". Verás la lista de editores con sus correos. Haz clic en "Dar acceso" junto al editor y se despliegan las instrucciones exactas. En resumen: abre el Drive del repositorio, clic derecho sobre la carpeta "Proyectos" (sin entrar), Compartir, escribe el correo del editor, permiso "Colaborador", Enviar y confirma compartir con subcarpetas.' },
+    { icon:'ti-brand-google-drive', titulo:'¿Cómo le doy acceso al Drive a un editor?', desc:'Ve a la pestaña "Drive". Verás la lista de editores con sus correos. Haz clic en "Dar acceso" junto al editor y se despliegan las instrucciones exactas. Los pasos son: abre el Drive del repositorio con el botón que aparece en la pestaña Drive, verás la carpeta raíz "Repositorio CINF Fatima". Haz clic derecho sobre la subcarpeta "Proyectos" — sin entrar en ella —, selecciona "Compartir", escribe el correo del editor, cambia el permiso a "Colaborador", haz clic en "Enviar" y cuando Drive pregunte, selecciona "Compartir de todas formas" para que tenga acceso a todas las subcarpetas de años automáticamente.' },
     { icon:'ti-user-minus', titulo:'¿Cómo revoco el acceso al Drive?', desc:'En la pestaña "Drive", haz clic en "Revocar acceso" junto al editor. Se despliegan las instrucciones: abre el Drive, clic derecho sobre "Proyectos", Compartir, busca el correo, elimina con el ícono de basura y confirma quitar acceso a subcarpetas.' },
     { icon:'ti-key', titulo:'¿Cómo manejo contraseñas?', desc:'Puedes cambiar tu propia contraseña desde "Usuarios" → "Cambiar mi contraseña". Para tus editores, usa el botón "Resetear clave" en la tarjeta de cada uno — le asignas una nueva clave que debes comunicarle.' },
     { icon:'ti-clipboard-list', titulo:'¿Qué veo en Auditoría?', desc:'Un registro cronológico de todas las acciones realizadas por ti y por los editores que creaste: proyectos ingresados, usuarios creados, contraseñas cambiadas, con fecha y hora exactas.' },
@@ -1228,7 +1391,7 @@ const AYUDA = {
     { icon:'ti-plus', titulo:'¿Cómo cargo un proyecto?', desc:'En "Administrar" → "Ingresar proyecto". Llena el formulario — los campos con asterisco rojo (*) son obligatorios. El sistema te pedirá confirmación antes de registrar.' },
     { icon:'ti-file-type-pdf', titulo:'¿Cómo subo el PDF del proyecto?', desc:'Paso 1: Abre Google Drive con la cuenta cinffatima — usa el botón en la pestaña "Drive" o entra directo a drive.google.com. Paso 2: Ve a Repositorio CINF Fatima → Proyectos → Proyectos Estudiantes o Docentes → carpeta del año. Paso 3: Sube el PDF. Paso 4: Clic derecho sobre el archivo → "Obtener enlace" → cambia a "Cualquier persona con el enlace" → "Copiar enlace". Paso 5: Pega el enlace en el campo "Enlace al PDF" del formulario.' },
     { icon:'ti-users', titulo:'¿Cómo gestiono usuarios?', desc:'En "Usuarios" puedes crear editores y superadministradores. Para cada uno defines: nombre de usuario (sin espacios), contraseña (mínimo 6 caracteres), rol y correo Gmail. Puedes activar o desactivar cualquier cuenta del sistema.' },
-    { icon:'ti-brand-google-drive', titulo:'¿Cómo gestiono el acceso al Drive?', desc:'En la pestaña "Drive" ves todos los editores y sus correos. Usa los botones "Dar acceso" o "Revocar acceso" para ver instrucciones paso a paso. Importante: se comparte la carpeta "Proyectos", nunca la raíz "Repositorio CINF Fatima".' },
+    { icon:'ti-brand-google-drive', titulo:'¿Cómo gestiono el acceso al Drive?', desc:'En la pestaña "Drive" ves los editores registrados y sus correos. Para dar acceso al Drive también a un Super Admin, el procedimiento es el mismo: abre el Drive del repositorio con el botón de la pestaña Drive, haz clic derecho sobre la subcarpeta "Proyectos" — sin entrar en ella —, selecciona "Compartir", escribe el correo de la persona (editor o superadmin), cambia el permiso a "Colaborador", haz clic en "Enviar" y confirma con "Compartir de todas formas". Nunca compartas la carpeta raíz "Repositorio CINF Fatima" — solo la subcarpeta "Proyectos".' },
     { icon:'ti-user-minus', titulo:'¿Cómo revoco el acceso al Drive?', desc:'En la pestaña "Drive", haz clic en "Revocar acceso" junto al editor. Se muestran los pasos: abrir Drive, clic derecho sobre "Proyectos", Compartir, buscar el correo, eliminar con el ícono de basura y confirmar.' },
     { icon:'ti-key', titulo:'¿Cómo manejo contraseñas?', desc:'Puedes cambiar tu propia contraseña desde "Usuarios". Para cualquier otro usuario — editor o superadmin — usa el botón "Resetear clave" en su tarjeta y asígnale una nueva.' },
     { icon:'ti-clipboard-list', titulo:'¿Qué veo en Auditoría?', desc:'El registro completo de actividad de todos los usuarios sin excepción: proyectos ingresados, usuarios creados o desactivados, contraseñas reseteadas, con fecha, hora y nombre del responsable.' },
