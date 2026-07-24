@@ -335,7 +335,7 @@
         <option value="fisico">Solo físico</option>
       </select>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:8px;"><div class="rcount" id="rcount"></div><div style="display:flex;gap:8px;"><button class="btn-exportar" onclick="exportarExcel()"><i class="ti ti-download"></i> Exportar Excel</button><button class="btn-limpiar" onclick="limpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:8px;"><div class="rcount" id="rcount"></div><div style="display:flex;gap:8px;"><button class="btn-exportar" id="btn-exportar" onclick="exportarExcel()" style="display:none;"><i class="ti ti-download"></i> Exportar Excel</button><button class="btn-limpiar" onclick="limpiarFiltros()"><i class="ti ti-filter-off"></i> Limpiar filtros</button></div></div>
     <div id="resultados"><div class="empty"><i class="ti ti-search"></i>Ingresa un término de búsqueda<br>o selecciona un filtro para comenzar.</div></div>
   </div>
 
@@ -702,8 +702,8 @@ function renderResultados(lista) {
       </div>${res}
       <div class="ractions">
         <button class="btn-det" onclick="verDetalle(${i})"><i class="ti ti-info-circle"></i> Ver detalles</button>${acc}
-        ${SESSION && (SESSION.rol==='maestro'||SESSION.rol==='superadmin') ? `<button class="btn-editar" onclick="abrirEditar(${i})"><i class="ti ti-pencil"></i> Editar</button>` : ''}
-        ${SESSION && SESSION.rol==='maestro' ? `<button class="btn-eliminar" onclick="confirmarEliminar(${i})"><i class="ti ti-trash"></i> Eliminar</button>` : ''}
+${SESSION ? `<button class="btn-editar" onclick="abrirEditar(${i})"><i class="ti ti-pencil"></i> Editar</button>` : ''}
+        ${SESSION && (SESSION.rol==='maestro'||SESSION.rol==='superadmin') ? `<button class="btn-eliminar" onclick="confirmarEliminar(${i})"><i class="ti ti-trash"></i> Eliminar</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -762,6 +762,9 @@ async function doLogin() {
       if(d.rol==='maestro'||d.rol==='superadmin'){
         document.getElementById('tab-drive').classList.remove('hidden');
       }
+      document.getElementById('btn-exportar').style.display='flex';
+      // Re-renderizar resultados actuales para mostrar botones Editar/Eliminar
+      if(LISTA_ACTUAL && LISTA_ACTUAL.length) renderResultados(LISTA_ACTUAL);
       mostrarBienvenida(d.rol);
       iniciarTimerInactividad();
       // ocultar pestaña usuarios/auditoría si es editor
@@ -792,6 +795,8 @@ function cerrarSesion() {
   document.getElementById('lg-err').style.display='none';
   document.getElementById('atab-usuarios').style.display='';
   document.getElementById('tab-drive').classList.add('hidden');
+  document.getElementById('btn-exportar').style.display='none';
+  if(LISTA_ACTUAL && LISTA_ACTUAL.length) renderResultados(LISTA_ACTUAL);
   document.getElementById('atab-auditoria').style.display='';
   document.getElementById('nu-rol-campo').style.display='';
   cambiarATab('ingresar');
