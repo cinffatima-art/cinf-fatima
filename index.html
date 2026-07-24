@@ -891,7 +891,7 @@ async function cargarUsuarios() {
     if(!d.usuarios.length) { document.getElementById('lista-usuarios').innerHTML='<p style="font-size:13px;color:var(--texto-muted);">No hay usuarios registrados aún.</p>'; return; }
     document.getElementById('lista-usuarios').innerHTML = d.usuarios.map(u => {
       const ini = u.usuario.charAt(0).toUpperCase();
-      const activo = String(u.activo)==='TRUE';
+      const activo = ['TRUE','VERDADERO'].includes(String(u.activo).toUpperCase());
       return `<div class="ucard">
         <div class="uinfo">
           <div class="uavatar">${ini}</div>
